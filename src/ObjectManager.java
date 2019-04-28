@@ -1,3 +1,5 @@
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -5,18 +7,24 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
+import javax.swing.Timer;
+
 public class ObjectManager implements ActionListener {
 	
 	Rocketship rocketship;
 	ArrayList<Projectile> projectiles;
 	ArrayList<Alien> aliens;
 	Random random;
+	int score;
+	Font scoreFont;
 	
 	public ObjectManager(Rocketship rocket) {
 		 this.rocketship = rocket;
 		 this.projectiles = new ArrayList<Projectile>();
 		 this.aliens = new ArrayList<Alien>();
 		 random = new Random();
+		 score = 0;
+		 scoreFont = new Font("Arial", Font.PLAIN,24);
 	}
 	
 	public void addProjectile(Projectile projectile) {
@@ -47,6 +55,12 @@ public class ObjectManager implements ActionListener {
 				}
 				
 			}
+			
+			rocketship.update();
+			
+			checkCollision();
+			
+			purgeObjects();
 	}
 	
 	public void draw(Graphics g) {
@@ -66,6 +80,10 @@ public class ObjectManager implements ActionListener {
 			projectile.draw(g);
 			
 		}
+		
+		g.setFont(scoreFont);
+		g.setColor(Color.MAGENTA);
+		g.drawString("Score: " + score, LeagueInvaders.WIDTH / 2 - 50 , 50);
 	}
 	
 	public void purgeObjects() {
@@ -89,6 +107,34 @@ public class ObjectManager implements ActionListener {
 			
 		}
 		
+	}
+	
+	public void checkCollision() {
+		for (Iterator<Alien> iterator = aliens.iterator(); iterator.hasNext();) {
+			
+			Alien alien = iterator.next();
+			
+			if(alien.collisionBox.intersects(rocketship.collisionBox))  {
+				alien.isActive = false;
+				rocketship.isActive = false;
+				
+			}
+			
+			for (Iterator<Projectile> iteratorp = projectiles.iterator(); iteratorp.hasNext();) {
+				
+				Projectile projectile = iteratorp.next();
+				
+				if(alien.collisionBox.intersects(projectile.collisionBox)) {
+					alien.isActive = false;
+					projectile.isActive = false;
+					score++;
+				}
+			}
+		}
+	}
+	
+	public int getScore() {
+		return this.score;
 	}
 
 	@Override
