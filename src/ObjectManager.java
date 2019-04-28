@@ -1,9 +1,11 @@
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
-public class ObjectManager {
+public class ObjectManager implements ActionListener {
 	
 	Rocketship rocketship;
 	ArrayList<Projectile> projectiles;
@@ -11,7 +13,7 @@ public class ObjectManager {
 	Random random;
 	
 	public ObjectManager(Rocketship rocket) {
-		 this.rocketship = new Rocketship(250,700,50,50);
+		 this.rocketship = rocket;
 		 this.projectiles = new ArrayList<Projectile>();
 		 this.aliens = new ArrayList<Alien>();
 		 random = new Random();
@@ -87,5 +89,10 @@ public class ObjectManager {
 			
 		}
 		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		addAlien();
 	}
 }
